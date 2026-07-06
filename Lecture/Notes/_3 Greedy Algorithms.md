@@ -43,28 +43,28 @@ The algorithm always chooses the largest possible coin.
 
 # Characteristics of Greedy Algorithms
 
-* Makes decisions one step at a time.
-* Decisions are irreversible.
-* Usually simple and efficient.
-* Does not always guarantee optimal solution.
-* Works only when the problem satisfies specific properties.
+- Makes decisions one step at a time.
+- Decisions are irreversible.
+- Usually simple and efficient.
+- Does not always guarantee optimal solution.
+- Works only when the problem satisfies specific properties.
 
 ---
 
 # Advantages
 
-* Easy to implement
-* Fast execution
-* Less memory usage
-* Efficient for optimization problems
+- Easy to implement
+- Fast execution
+- Less memory usage
+- Efficient for optimization problems
 
 ---
 
 # Disadvantages
 
-* May not always produce optimal solutions
-* Difficult to prove correctness
-* Works only for specific problem classes
+- May not always produce optimal solutions
+- Difficult to prove correctness
+- Works only for specific problem classes
 
 ---
 
@@ -124,9 +124,9 @@ Return solution
 
 A **Spanning Tree** of a graph is a tree that:
 
-* Includes all vertices.
-* Contains no cycles.
-* Has exactly (V − 1) edges.
+- Includes all vertices.
+- Contains no cycles.
+- Has exactly (V − 1) edges.
 
 A **Minimum Spanning Tree (MST)** is a spanning tree whose total edge weight is minimum.
 
@@ -182,9 +182,9 @@ Edges in MST = V - 1
 
 MST contains:
 
-* No cycles
-* Minimum possible cost
-* All vertices connected
+- No cycles
+- Minimum possible cost
+- All vertices connected
 
 ---
 
@@ -316,6 +316,81 @@ int main()
                 <<" : "<<edges[i].w<<endl;
 
             unionSet(a,b);
+        }
+    }
+}
+```
+
+---
+
+##Java Program (Kruskal)
+
+```Java
+import java.util.Arrays;
+import java.util.Comparator;
+
+class Edge {
+    int u, v, w;
+
+    Edge(int u, int v, int w) {
+        this.u = u;
+        this.v = v;
+        this.w = w;
+    }
+}
+
+public class KruskalMST {
+
+    static int[] parent = new int[100];
+
+    // Find function
+    static int find(int i) {
+        while (parent[i] != i) {
+            i = parent[i];
+        }
+        return i;
+    }
+
+    // Union function
+    static void unionSet(int a, int b) {
+        parent[a] = b;
+    }
+
+    public static void main(String[] args) {
+
+        int n = 4;
+        int e = 5;
+
+        Edge[] edges = {
+            new Edge(0, 1, 10),
+            new Edge(0, 2, 6),
+            new Edge(0, 3, 5),
+            new Edge(1, 3, 15),
+            new Edge(2, 3, 4)
+        };
+
+        // Sort edges by weight
+        Arrays.sort(edges, Comparator.comparingInt(edge -> edge.w));
+
+        // Initialize parent array
+        for (int i = 0; i < n; i++) {
+            parent[i] = i;
+        }
+
+        System.out.println("Edges in MST:");
+
+        // Kruskal's Algorithm
+        for (int i = 0; i < e; i++) {
+            int a = find(edges[i].u);
+            int b = find(edges[i].v);
+
+            if (a != b) {
+                System.out.println(edges[i].u + " - " +
+                                   edges[i].v + " : " +
+                                   edges[i].w);
+
+                unionSet(a, b);
+            }
         }
     }
 }
@@ -530,9 +605,9 @@ O(E \log V)
 
 ## Applications
 
-* GPS Navigation
-* Routing Protocols
-* Network Optimization
+- GPS Navigation
+- Routing Protocols
+- Network Optimization
 
 ---
 
@@ -544,8 +619,8 @@ A bag has capacity W.
 
 Each item has:
 
-* Weight
-* Profit
+- Weight
+- Profit
 
 Fractions of items are allowed.
 
@@ -635,8 +710,8 @@ Select maximum number of non-overlapping activities.
 
 Each activity has:
 
-* Start time
-* Finish time
+- Start time
+- Finish time
 
 ---
 
@@ -710,8 +785,8 @@ Huffman Coding is a lossless data compression technique.
 
 It assigns:
 
-* Shorter codes to frequent characters.
-* Longer codes to rare characters.
+- Shorter codes to frequent characters.
+- Longer codes to rare characters.
 
 ---
 
@@ -764,10 +839,10 @@ O(n \log n)
 
 # Applications of Huffman Coding
 
-* ZIP Files
-* JPEG Compression
-* MP3 Compression
-* Data Transmission
+- ZIP Files
+- JPEG Compression
+- MP3 Compression
+- Data Transmission
 
 ---
 
