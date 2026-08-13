@@ -1,0 +1,750 @@
+Unit 4: Dynamic Programming
+
+Topic 2: 0/1 Knapsack Problem (Dynamic Programming)
+
+Difficulty: ⭐⭐⭐⭐⭐
+
+Prerequisites: Dynamic Programming Basics, Recursion, Arrays
+
+Programming Languages: Java & C++
+
+⸻
+
+Learning Objectives
+
+After completing this lecture, students will be able to:
+
+* Understand the 0/1 Knapsack Problem.
+* Explain why the Greedy approach fails.
+* Derive the Dynamic Programming recurrence relation.
+* Solve the problem using:
+    * Recursion
+    * Memoization
+    * Tabulation
+    * Space Optimization
+* Perform a complete DP table dry run.
+* Analyze time and space complexity.
+* Compare 0/1 Knapsack with Fractional Knapsack.
+
+⸻
+
+1. Real-World Motivation
+
+Imagine you are going on a trekking trip.
+
+Your backpack can carry only 10 kg.
+
+You have several items:
+
+Item	Weight	Value
+Laptop	6	30
+Camera	3	14
+Jacket	4	16
+Water Bottle	2	9
+
+You want to maximize the total value carried.
+
+However,
+
+each item has only two choices:
+
+* Take it
+* Leave it
+
+You cannot divide an item.
+
+This is called the 0/1 Knapsack Problem.
+
+⸻
+
+2. Why is it Called “0/1”?
+
+Each item has only two possible states.
+
+0 → Do NOT take the item
+1 → Take the item
+
+There is no option like:
+
+Take half of the laptop
+
+Unlike Fractional Knapsack,
+
+items are indivisible.
+
+⸻
+
+3. Problem Statement
+
+Given:
+
+* N items
+* Weight of each item
+* Value (profit) of each item
+* Knapsack capacity W
+
+Find the maximum total value without exceeding the capacity.
+
+⸻
+
+Example
+
+Capacity
+
+W = 7
+
+Item	Weight	Value
+A	1	1
+B	3	4
+C	4	5
+D	5	7
+
+Goal
+
+Maximum Profit
+
+⸻
+
+4. Why Greedy Fails
+
+Many students think:
+
+Select the item with the highest value-to-weight ratio.
+
+This works for Fractional Knapsack.
+
+But it fails here.
+
+⸻
+
+Counter Example
+
+Capacity
+
+50
+
+Item	Weight	Value	Ratio
+A	10	60	6
+B	20	100	5
+C	30	120	4
+
+Greedy picks:
+
+A
+↓
+B
+
+Weight
+
+30
+
+Value
+
+160
+
+Remaining Capacity
+
+20
+
+Cannot take C.
+
+⸻
+
+Optimal Solution
+
+B
+↓
+C
+
+Weight
+
+50
+
+Value
+
+220
+
+Clearly,
+
+220 > 160
+
+Therefore,
+
+Greedy fails.
+
+Dynamic Programming is required.
+
+⸻
+
+5. Core Idea
+
+For every item,
+
+we have two choices:
+
+Take
+OR
+Don't Take
+
+We calculate both possibilities and choose the better one.
+
+⸻
+
+6. State Definition
+
+The DP state is:
+
+dp[i][w]
+
+Meaning:
+
+Maximum value that can be obtained using the first i items with capacity w.
+
+This is the most important concept.
+
+⸻
+
+7. Decision Tree
+
+Suppose current item is:
+
+Item i
+
+Choices
+
+                Item i
+             /          \
+      Don't Take      Take
+
+Take only if
+
+Weight ≤ Capacity
+
+Choose the maximum value.
+
+⸻
+
+8. Recurrence Relation
+
+If
+
+weight[i] > w
+
+Cannot take.
+
+dp[i][w]
+=
+dp[i-1][w]
+
+Otherwise
+
+dp[i][w]
+=
+max(
+dp[i-1][w],
+value[i] + dp[i-1][w-weight[i]]
+)
+
+This is the heart of the algorithm.
+
+⸻
+
+9. Understanding the Formula
+
+Suppose
+
+Current capacity
+
+7
+
+Current item
+
+Weight =4
+Value =5
+
+Two choices
+
+Don’t Take
+
+dp[i-1][7]
+
+Take
+
+5 + dp[i-1][3]
+
+Choose whichever is larger.
+
+⸻
+
+10. Recursive Solution
+
+Knapsack(i,W)
+if no items
+return 0
+if weight > W
+skip item
+else
+return maximum(
+Take,
+Don't Take
+)
+
+⸻
+
+11. Dry Run
+
+Capacity
+
+7
+
+Item	Weight	Value
+A	1	1
+B	3	4
+C	4	5
+D	5	7
+
+⸻
+
+DP Table
+
+Rows = Items
+
+Columns = Capacity
+
+Item	0	1	2	3	4	5	6	7
+0	0	0	0	0	0	0	0	0
+A	0	1	1	1	1	1	1	1
+B	0	1	1	4	5	5	5	5
+C	0	1	1	4	5	6	6	9
+D	0	1	1	4	5	7	8	9
+
+⸻
+
+Answer
+
+Maximum Profit = 9
+
+Selected Items
+
+B
++
+C
+
+Weight
+
+3+4=7
+
+Value
+
+4+5=9
+
+⸻
+
+12. Step-by-Step Table Filling
+
+Item A
+
+Weight =1
+
+Value =1
+
+Every capacity ≥1
+
+gets value
+
+1
+
+⸻
+
+Item B
+
+Weight =3
+
+At Capacity
+
+4
+
+Choices
+
+Don’t Take
+
+1
+
+Take
+
+4+1=5
+
+Store
+
+5
+
+⸻
+
+Item C
+
+Weight
+
+4
+
+Capacity
+
+7
+
+Choices
+
+Don’t Take
+
+5
+
+Take
+
+5+4=9
+
+Store
+
+9
+
+⸻
+
+13. Recursive Java Implementation
+
+public class KnapsackRecursive {
+    static int knapsack(int wt[], int val[],
+                        int n, int W){
+        if(n==0 || W==0)
+            return 0;
+        if(wt[n-1]>W)
+            return knapsack(wt,val,n-1,W);
+        return Math.max(
+                knapsack(wt,val,n-1,W),
+                val[n-1]+
+                knapsack(wt,val,
+                n-1,
+                W-wt[n-1])
+        );
+    }
+    public static void main(String[] args){
+        int wt[]={1,3,4,5};
+        int val[]={1,4,5,7};
+        System.out.println(
+                knapsack(wt,val,4,7)
+        );
+    }
+}
+
+⸻
+
+14. Memoization (Top-Down)
+
+import java.util.Arrays;
+public class KnapsackMemo {
+    static int[][] dp = new int[100][100];
+    static int solve(int[] wt, int[] val, int n, int W) {
+        if (n == 0 || W == 0)
+            return 0;
+        if (dp[n][W] != -1)
+            return dp[n][W];
+        if (wt[n - 1] > W)
+            return dp[n][W] = solve(wt, val, n - 1, W);
+        return dp[n][W] = Math.max(
+                solve(wt, val, n - 1, W),
+                val[n - 1] + solve(wt, val, n - 1, W - wt[n - 1])
+        );
+    }
+    public static void main(String[] args) {
+        for (int[] row : dp)
+            Arrays.fill(row, -1);
+        int[] wt = {1, 3, 4, 5};
+        int[] val = {1, 4, 5, 7};
+        System.out.println(solve(wt, val, wt.length, 7));
+    }
+}
+
+⸻
+
+15. Tabulation (Bottom-Up)
+
+public class KnapsackDP {
+    public static void main(String[] args){
+        int wt[]={1,3,4,5};
+        int val[]={1,4,5,7};
+        int W=7;
+        int n=wt.length;
+        int[][] dp=new int[n+1][W+1];
+        for(int i=1;i<=n;i++){
+            for(int w=1;w<=W;w++){
+                if(wt[i-1]<=w){
+                    dp[i][w]=Math.max(
+                        dp[i-1][w],
+                        val[i-1]+
+                        dp[i-1][w-wt[i-1]]
+                    );
+                }
+                else{
+                    dp[i][w]=dp[i-1][w];
+                }
+            }
+        }
+        System.out.println(dp[n][W]);
+    }
+}
+
+⸻
+
+16. Space Optimized DP
+
+Observation
+
+Each row depends only on the previous row.
+
+Hence,
+
+we can use a 1D DP array.
+
+int[] dp = new int[W + 1];
+for (int i = 0; i < n; i++) {
+    for (int w = W; w >= wt[i]; w--) {
+        dp[w] = Math.max(dp[w], val[i] + dp[w - wt[i]]);
+    }
+}
+
+Important: Iterate from right to left (W down to wt[i]) in 0/1 Knapsack. This ensures each item is used at most once.
+
+⸻
+
+17. C++ Tabulation
+
+#include<iostream>
+#include<vector>
+using namespace std;
+int main(){
+    vector<int> wt={1,3,4,5};
+    vector<int> val={1,4,5,7};
+    int W=7;
+    int n=wt.size();
+    vector<vector<int>>
+    dp(n+1,vector<int>(W+1,0));
+    for(int i=1;i<=n;i++){
+        for(int w=1;w<=W;w++){
+            if(wt[i-1]<=w){
+                dp[i][w]=max(
+                    dp[i-1][w],
+                    val[i-1]+
+                    dp[i-1][w-wt[i-1]]
+                );
+            }
+            else{
+                dp[i][w]=dp[i-1][w];
+            }
+        }
+    }
+    cout<<dp[n][W];
+    return 0;
+}
+
+⸻
+
+18. Recovering the Selected Items (Backtracking)
+
+After filling the DP table, we can determine which items were selected.
+
+Algorithm:
+
+1. Start from dp[n][W].
+2. Compare dp[i][w] with dp[i-1][w].
+3. If they are equal:
+    * Item i was not selected.
+4. Otherwise:
+    * Item i was selected.
+    * Reduce the remaining capacity:
+
+w = w - wt[i-1]
+
+5. Continue until i = 0.
+
+This technique is frequently asked in interviews and practical exams.
+
+⸻
+
+19. Time Complexity
+
+Approach	Time	Space
+Recursive	O(2ⁿ)	O(n)
+Memoization	O(n × W)	O(n × W)
+Tabulation	O(n × W)	O(n × W)
+Space Optimized	O(n × W)	O(W)
+
+⸻
+
+20. 0/1 vs Fractional Knapsack
+
+0/1 Knapsack	Fractional Knapsack
+Items cannot be divided	Items can be divided
+Solved using Dynamic Programming	Solved using Greedy
+Greedy is not always optimal	Greedy is optimal
+Decision: Take or Leave	Decision: Take fully or partially
+Time: O(n × W)	Time: O(n log n)
+
+⸻
+
+21. Applications
+
+* 🎒 Cargo loading with indivisible items
+* 💰 Budget allocation
+* 📦 Warehouse packing
+* 🚚 Delivery planning
+* 💻 Memory allocation
+* ☁️ Cloud resource allocation (indivisible tasks)
+* 🎯 Project selection under resource constraints
+
+⸻
+
+22. Advantages
+
+* Guarantees the optimal solution.
+* Handles indivisible items correctly.
+* Can reconstruct the chosen items.
+* Foundation for many advanced DP problems.
+
+⸻
+
+23. Limitations
+
+* Requires additional memory.
+* Complexity depends on the capacity W.
+* Less efficient for very large capacities.
+
+⸻
+
+24. Common Mistakes
+
+* Applying the Greedy approach to 0/1 Knapsack.
+* Forgetting the base case (n == 0 or W == 0).
+* Using left-to-right iteration in the 1D DP version (this incorrectly allows multiple uses of the same item).
+* Confusing the recurrence with the Fractional Knapsack strategy.
+* Mixing up item index (i) and capacity (W).
+
+⸻
+
+25. Best Practices
+
+When solving any DP problem:
+
+1. Clearly define the state.
+2. Write the recurrence relation before coding.
+3. Identify the base cases.
+4. Dry-run with a small example.
+5. Optimize space only after the basic solution works.
+6. Learn how to reconstruct the chosen solution, not just compute its value.
+
+⸻
+
+26. Classroom Activity
+
+Activity: Pack the Backpack
+
+Capacity = 8
+
+Item	Weight	Value
+A	2	3
+B	3	4
+C	4	5
+D	5	8
+
+Task
+
+1. Draw the complete DP table.
+2. Fill each cell manually.
+3. Find the maximum profit.
+4. Identify which items were selected.
+5. Compare the result with a greedy approach.
+
+⸻
+
+27. Homework
+
+1. Explain why the Greedy approach fails for the 0/1 Knapsack Problem.
+2. Derive the recurrence relation.
+3. Solve a 0/1 Knapsack problem with five items using tabulation.
+4. Implement Memoization in Java or C++.
+5. Modify the program to print the selected items.
+
+⸻
+
+28. Interview Questions
+
+1. Why is 0/1 Knapsack solved using Dynamic Programming?
+2. What is the DP state in the 0/1 Knapsack Problem?
+3. Why does the 1D DP solution iterate from right to left?
+4. How can you reconstruct the selected items?
+5. Compare 0/1 Knapsack and Fractional Knapsack.
+
+⸻
+
+29. MCQs
+
+Q1. The 0/1 Knapsack Problem is generally solved using:
+
+* A. Greedy Algorithm
+* B. Divide & Conquer
+* C. Dynamic Programming ✅
+* D. Backtracking
+
+⸻
+
+Q2. In the 0/1 Knapsack Problem, each item can be:
+
+* A. Taken partially
+* B. Taken multiple times
+* C. Either taken or not taken ✅
+* D. Split into equal halves
+
+⸻
+
+Q3. The recurrence relation uses:
+
+* A. Only the current item
+* B. The previous row of the DP table ✅
+* C. Future states
+* D. Random values
+
+⸻
+
+Q4. The time complexity of the tabulation approach is:
+
+* A. O(n)
+* B. O(W)
+* C. O(n × W) ✅
+* D. O(n log n)
+
+⸻
+
+Q5. Which statement about the Greedy approach for the 0/1 Knapsack Problem is correct?
+
+* A. It always produces the optimal solution.
+* B. It works only when items are divisible.
+* C. It may fail to produce the optimal solution. ✅
+* D. It is faster and always correct.
+
+⸻
+
+30. Viva Questions
+
+1. Define the 0/1 Knapsack Problem.
+2. Why does the Greedy algorithm fail?
+3. Explain the DP state dp[i][w].
+4. What is the recurrence relation?
+5. What are the base cases?
+6. How do Memoization and Tabulation differ?
+7. How can the selected items be retrieved from the DP table?
+
+⸻
+
+31. Summary
+
+* The 0/1 Knapsack Problem is a classic Dynamic Programming problem where each item is either selected or not selected.
+* The greedy approach does not guarantee the optimal solution because local choices can block better overall combinations.
+* The DP state dp[i][w] represents the maximum value obtainable using the first i items with capacity w.
+* The recurrence considers two choices: take the current item or leave it.
+* Dynamic Programming reduces the exponential recursive solution to O(n × W) time.
+* The solution can be further optimized to O(W) space using a one-dimensional DP array with right-to-left iteration.
