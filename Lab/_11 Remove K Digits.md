@@ -1,4 +1,4 @@
-# Practical: Remove K Digits
+# Practical 11: Remove K Digits
 
 ## 1. Aim
 
